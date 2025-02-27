@@ -383,4 +383,21 @@ class Client(object):
                     print(f'{RED}[-] No attack paths found!{RESET}')
                 print('')
 
+    def purge_data(self):
+        '''
+        Purge all BHCE Data
+        '''
+        bhpurge_body = json.dumps({
+            "deleteCollectedGraphData": "true",
+            "deleteDataQualityHistory": "true"
+        }).encode('utf-8')  # Convert to JSON string and encode to bytes
+        print('[*] Purging data ... ', end='')
+        r = self._request('POST', '/api/v2/clear-database', body=bhpurge_body)
+        if r.status_code == 204:
+            print('Data purged successfully')
+            return True
+        else:
+            print(' !!! Could not purge data !!!')
+            return False
+
         return
