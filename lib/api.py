@@ -388,8 +388,8 @@ class Client(object):
         Purge all BHCE Data
         '''
         bhpurge_body = json.dumps({
-            "deleteCollectedGraphData": "true",
-            "deleteDataQualityHistory": "true"
+            "deleteCollectedGraphData": true,
+            "deleteDataQualityHistory": true
         }).encode('utf-8')  # Convert to JSON string and encode to bytes
         print('[*] Purging data ... ', end='')
         r = self._request('POST', '/api/v2/clear-database', body=bhpurge_body)
