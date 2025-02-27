@@ -393,7 +393,7 @@ class Client(object):
         }).encode('utf-8')  # Convert to JSON string and encode to bytes
         print('[*] Purging data ... ', end='')
         r = self._request('POST', '/api/v2/clear-database', body=bhpurge_body)
-        if r.status_code == 200:
+        if r.status_code == 204:
             print('Data purged successfully')
             return True
         else:
