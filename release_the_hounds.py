@@ -8,8 +8,8 @@ from lib.constants import *
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Process JSON files in chunks for BHCE and upload via API.")    
-    subparsers = parser.add_subparsers(dest="action", help="Choose an action: 'upload' or 'query'")
+    parser = argparse.ArgumentParser(description="Process JSON files in chunks for BHCE and upload via API, or clear data ready for a fresh upload.")    
+    subparsers = parser.add_subparsers(dest="action", help="Choose an action: 'upload', 'query', or 'purge'")
 
     # Subparser for "upload" action
     upload_parser = subparsers.add_parser("upload", help="Upload data to BHCE.")
@@ -28,6 +28,12 @@ def parse_args():
     query_parser.add_argument('-s', '--source', type=str, required=True, help='Source node as a single user (e.g., "jasper@absalom.org") or a file of source nodes to query')
     query_parser.add_argument('-d', '--dest', type=str, required=True, help='Destination node as a single object (e.g., "Domain Admins@absalom.org")')
     query_parser.add_argument('-x', '--exclude', type=str, default= "", help='Comma-separated list of relationships to exclude (e.g. "CanRDP,CanPSRemote"')
+
+    #Subparser for "purge" action
+    purge_parser = subparsers.add_parser("purge", help="Clear all data from BHCE")
+    purge_parser.add_argument('-u', '--url', type=str, help='[Can be specified in constants.py.] Base API URL to connect to. Ex. https://bloodhound.absalom.net:443')
+    purge_parser.add_argument('-k', '--tokenkey', type=str, help='[Can be specified in constants.py.] BloodHound token key  (Looks like a B64 blob: https://support.bloodhoundenterprise.io/hc/en-us/articles/11311053342619-Working-with-the-BloodHound-API#heading-2)')
+    purge_parser.add_argument('-i', '--tokenid', type=str, help='BloodHound token ID  (Looks like a GUID: https://support.bloodhoundenterprise.io/hc/en-us/articles/11311053342619-Working-with-the-BloodHound-API#heading-2)')
     
     return parser.parse_args()
     
@@ -124,6 +130,8 @@ def main():
         print('[*] Uploading files to BHCE!')
     elif args.action == "query":
         print('[*] Querying BHCE for attack paths!')
+    elif args.action == "purge":
+        print('[*] Purging data from BHCE!')
     else:
         print('[-] Must have an action specified!')
         exit()
@@ -177,6 +185,9 @@ def main():
     ### QUERYING THE API FOR ATTACK PATHS ##
     elif args.action == 'query':
         client.get_attack_paths(args.source, args.dest, args.exclude)
+    ### Clearing data from BHCE
+    elif args.action == 'purge':
+        client.purge_data()
 
 
 if __name__ == "__main__":
