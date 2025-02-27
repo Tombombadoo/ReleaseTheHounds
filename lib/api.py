@@ -397,7 +397,7 @@ class Client(object):
             print('Data purged successfully')
             return True
         else:
-            print(' !!! Could not purge data !!!')
+            print(f' !!! Could not purge data !!!, Error: {r.status_code}')
             return False
 
         return
